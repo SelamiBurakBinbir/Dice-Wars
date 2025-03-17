@@ -6,7 +6,7 @@ import {
   updateReinforcementInfo,
   updateAttackResultsUI,
   updateTerritoryUI,
-} from "..ui/ui.js";
+} from "../ui/ui.js";
 import { doAttackSequence } from "./attacks.js";
 
 // Yeni fonksiyon
