@@ -35,7 +35,7 @@ HTML, CSS, JavaScript.
 
 **4. Fast Mode:** If you don't want to watch the bots' moves, you can turn on fast mode. This will speed up the animations of the bots' attacks by 10 times.
 
-![Ekran görüntüsü 2025-03-18 121853](https://github.com/user-attachments/assets/b51458eb-53da-4166-99ac-91200781ede0)
+![fast-mode](https://github.com/user-attachments/assets/462eab86-a35c-46a8-9206-e459461ab536)
 
 ### How to Play?
 
