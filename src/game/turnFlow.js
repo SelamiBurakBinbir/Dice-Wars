@@ -63,7 +63,7 @@ function nextPlayer() {
     if (store.skipAlert) {
       store.skipAlert = false;
     } else {
-      alert(players[currentId].name + " turu başladı!");
+      alert(players[currentId].name + "'s turn!");
     }
   }
 }
