@@ -1,3 +1,6 @@
+// turnFlow.js
+// ---------------------------------------
+
 import { store } from "./store.js";
 import { players, addReinforcements, checkAnyPlayerWin } from "./gameLogic.js";
 import { territories } from "./map.js";
@@ -9,7 +12,7 @@ import {
 } from "../ui/ui.js";
 import { doAttackSequence } from "./attacks.js";
 
-// Yeni fonksiyon
+// Yeni fonksiyon (yukarıdaki BFS + Greedy yaklaşımı)
 import { chooseAttackWithGreedyBFS } from "./enemyStrategy.js";
 
 /**
@@ -57,7 +60,6 @@ function nextPlayer() {
   if (!players[currentId].isHuman) {
     doAiTurn(currentId);
   } else {
-    // İnsan oyuncu ise, eğer skipAlert=false ise uyarı ver
     if (store.skipAlert) {
       store.skipAlert = false;
     } else {
@@ -67,8 +69,11 @@ function nextPlayer() {
 }
 
 /**
- * Yapay zekâ (enemy) oyuncunun saldırı döngüsü
- * "kendi topraklarını kompakt tutma" faktörünü de hesaba katıyor.
+ * Yapay zekâ (enemy) oyuncunun saldırı döngüsü:
+ *  - BFS + Greedy
+ *  - Büyük birleşme önceliği
+ *  - Compactness > EnemyLoss
+ *  - Küçük düşman kümesi bonusu, saldırıyı yapanın boyutuna göre
  */
 export async function doAiTurn(aiId) {
   let canAttack = true;
@@ -79,11 +84,19 @@ export async function doAiTurn(aiId) {
     let aiTerrs = territories.filter((t) => t.owner === aiId && t.dice > 1);
 
     for (let et of aiTerrs) {
-      // BFS + Greedy saldırı planı
-      // maxDepth=3, pruneThreshold=0.05, enemyLossWeight=0.5, compactnessWeight=0.2
-      // bigMergeThreshold=3 => eğer myGain >= 3 ise kompaktlık eklenmesin
-      const choice = chooseAttackWithGreedyBFS(et, 3, 0.05, 0.5, 0.2, 3);
-      // { path, expectedValue } veya null
+      // Parametre örneği:
+      // maxDepth=3, pruneThreshold=0.05,
+      // bigMergeThreshold=3, compactnessWeight=1.0,
+      // enemyLossWeight=0.5, smallClusterWeight=1.0
+      const choice = chooseAttackWithGreedyBFS(
+        et,
+        3,
+        0.05,
+        3,
+        1.0, // compactnessWeight
+        0.5, // enemyLossWeight
+        1.0 // smallClusterWeight
+      );
 
       if (choice && choice.path && choice.path.length > 0) {
         // path içindeki her hedefe sırayla saldır
